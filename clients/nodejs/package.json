@@ -1,0 +1,8 @@
+{
+  "bin": {
+    "client": "./client.js"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
+  }
+}
