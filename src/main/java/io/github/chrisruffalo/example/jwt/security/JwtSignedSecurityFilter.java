@@ -4,8 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import io.github.chrisruffalo.example.jwt.pki.InstancedKeyProvider;
-import io.github.chrisruffalo.example.jwt.service.AccessPairService;
+import io.github.chrisruffalo.example.jwt.model.InstancedKeyProvider;
+import io.github.chrisruffalo.example.jwt.service.AccessVerificationDetailsStorageService;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -16,6 +16,12 @@ import java.io.IOException;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 
+/**
+ * This is a JAX-RS filter looks at incoming requests and optionally attaches a
+ * security context to them based on the presence of a (valid) JWT token. This will
+ * <strong><em>only</em></strong> affect JAX-RS routes.
+ *
+ */
 @Provider
 @PreMatching
 public class JwtSignedSecurityFilter implements ContainerRequestFilter {
@@ -25,7 +31,7 @@ public class JwtSignedSecurityFilter implements ContainerRequestFilter {
     private static final String SIGNED_JWT_ROLE = "Authorized";
 
     @Inject
-    AccessPairService accessPairService;
+    AccessVerificationDetailsStorageService accessVerificationDetailsStorageService;
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
@@ -99,7 +105,7 @@ public class JwtSignedSecurityFilter implements ContainerRequestFilter {
         }
 
         // find the public key that matches the token
-        final PublicKey publicKey = accessPairService.getPublicKeyForToken(subject);
+        final PublicKey publicKey = accessVerificationDetailsStorageService.getPublicKeyForSubject(subject);
         if (!(publicKey instanceof RSAPublicKey)) {
             // this shouldn't be possible but in the event it can't be cast we need to leave
             return null;

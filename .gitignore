@@ -8,3 +8,7 @@
 
 # java artifacts
 target
+
+# csharp artifacts
+**/bin
+**/obj

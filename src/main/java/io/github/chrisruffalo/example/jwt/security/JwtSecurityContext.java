@@ -9,6 +9,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A simple security context that is derived from a sent JWT. This is mostly
+ * used to just attach any roles the server decides on and to give a principal
+ * name.
+ */
 public class JwtSecurityContext implements SecurityContext {
 
     private final String subject;

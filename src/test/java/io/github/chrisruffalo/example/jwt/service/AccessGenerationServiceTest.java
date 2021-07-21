@@ -1,11 +1,9 @@
-package io.github.chrisruffalo.example.jwt.pki;
+package io.github.chrisruffalo.example.jwt.service;
 
 import io.github.chrisruffalo.example.jwt.model.GenerationResponse;
-import io.github.chrisruffalo.example.jwt.service.AccessPairService;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.smallrye.mutiny.Uni;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,22 +19,22 @@ import java.security.PublicKey;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
-class PkiGeneratorTest {
+class AccessGenerationServiceTest {
 
     @Inject
-    AccessPairService service;
+    AccessVerificationDetailsStorageService service;
 
     @Test
     public void testRoundTrip() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         final String clear = "clear text needs to survive round trip";
 
-        final PkiGenerator generator = new PkiGenerator();
+        final AccessGenerationService generator = new AccessGenerationService();
         final GenerationResponse generationResponse = generator.generate(service);
-        final PublicKey publicKey = service.getPublicKeyForToken(generationResponse.getAccessToken());
+        final PublicKey publicKey = service.getPublicKeyForSubject(generationResponse.getAccessToken());
         Assertions.assertNotNull(publicKey);
 
         // round trip crypto
-        final Cipher cipher = Cipher.getInstance(PkiGenerator.ALGO);
+        final Cipher cipher = Cipher.getInstance(AccessGenerationService.ALGO);
         final PrivateKey privateKey = GenerationResponse.getPrivateKey(generationResponse.getPrivateKey());
         cipher.init(Cipher.ENCRYPT_MODE, privateKey);
         byte[] message = cipher.doFinal(clear.getBytes());

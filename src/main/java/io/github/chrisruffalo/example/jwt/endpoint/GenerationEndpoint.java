@@ -1,11 +1,9 @@
 package io.github.chrisruffalo.example.jwt.endpoint;
 
 import io.github.chrisruffalo.example.jwt.model.GenerationResponse;
-import io.github.chrisruffalo.example.jwt.pki.PkiGenerator;
-import io.github.chrisruffalo.example.jwt.service.AccessPairService;
-import io.smallrye.mutiny.Uni;
+import io.github.chrisruffalo.example.jwt.service.AccessGenerationService;
+import io.github.chrisruffalo.example.jwt.service.AccessVerificationDetailsStorageService;
 
-import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -14,15 +12,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/**
+ * Simple entrypoint to generate an access token and private key. This ideally would
+ * be hosted on an internal service accessed only by (or on behalf of) authorized users.
+ */
 @ApplicationScoped
 @Path("/generate")
 public class GenerationEndpoint {
 
     @Inject
-    PkiGenerator service;
+    AccessGenerationService service;
 
     @Inject
-    AccessPairService pairService;
+    AccessVerificationDetailsStorageService pairService;
 
     @GET
     @Path("/")

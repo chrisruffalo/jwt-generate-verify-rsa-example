@@ -4,9 +4,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.github.chrisruffalo.example.jwt.model.GenerationResponse;
-import io.github.chrisruffalo.example.jwt.pki.InstancedKeyProvider;
-import io.github.chrisruffalo.example.jwt.pki.PkiGenerator;
-import io.github.chrisruffalo.example.jwt.service.AccessPairService;
+import io.github.chrisruffalo.example.jwt.model.InstancedKeyProvider;
+import io.github.chrisruffalo.example.jwt.service.AccessGenerationService;
+import io.github.chrisruffalo.example.jwt.service.AccessVerificationDetailsStorageService;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -21,18 +21,18 @@ import java.security.interfaces.RSAPrivateKey;
 class JwtSignedSecurityFilterTest {
 
     @Inject
-    AccessPairService accessPairService;
+    AccessVerificationDetailsStorageService accessVerificationDetailsStorageService;
 
     @Inject
     JwtSignedSecurityFilter filter;
 
     @Inject
-    PkiGenerator generator;
+    AccessGenerationService generator;
 
     @Test
     public void testValidUpload() {
         // generate access and persist key to db
-        final GenerationResponse response = generator.generate(accessPairService);
+        final GenerationResponse response = generator.generate(accessVerificationDetailsStorageService);
         Assertions.assertNotNull(response.getAccessToken());
         Assertions.assertNotNull(response.getPrivateKey());
 
@@ -55,12 +55,12 @@ class JwtSignedSecurityFilterTest {
     @Test
     public void testInvalidUpload() {
         // generate access and persist key to db
-        GenerationResponse response = generator.generate(accessPairService);
+        GenerationResponse response = generator.generate(accessVerificationDetailsStorageService);
         Assertions.assertNotNull(response.getAccessToken());
         final String firstAccessToken = response.getAccessToken();
 
         // get second response to cause key mismatch
-        response = generator.generate(accessPairService);
+        response = generator.generate(accessVerificationDetailsStorageService);
         Assertions.assertNotNull(response.getPrivateKey());
 
         // get private key

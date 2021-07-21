@@ -3,7 +3,7 @@ package io.github.chrisruffalo.example.jwt.endpoint;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import io.github.chrisruffalo.example.jwt.model.GenerationResponse;
-import io.github.chrisruffalo.example.jwt.pki.InstancedKeyProvider;
+import io.github.chrisruffalo.example.jwt.model.InstancedKeyProvider;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
 import java.security.interfaces.RSAPrivateKey;
 
 @QuarkusTest
