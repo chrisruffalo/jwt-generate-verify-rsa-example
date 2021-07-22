@@ -53,9 +53,15 @@ In order to create a more practical implementation several factors should be con
 ```
 
 ### Example Clients
-For example (minimal) clients see the following resources:
+Example clients are provided for the following languages:
 * [Python](/clients/python/client.py)
 * [NodeJS](/clients/nodejs/client.js)
 * [Perl](/clients/perl/client.pl)
 * [C#](/clients/csharp/Program.cs)
 * [Go](/clients/go/client.go)
+* [Java](/clients/java/src/main/java/io/github/chrisruffalo/example/jwt/client/Client.java)
+
+Each of the example clients calls the access code generation endpoint to create a new access token and private key
+response and then uses that response. First it makes a call to the `/api/check` endpoint that will be rejected with
+"403 Forbidden" and then it makes another call with the correct JWT. In a production configuration clients would read
+the access token and key from disk or another configuration source instead of immediately using them.
