@@ -75,7 +75,7 @@ public class JwtSignedSecurityFilter implements ContainerRequestFilter {
             return;
         }
 
-        final JwtSecurityContext securityContext = this.getContextForJwt(jwt);
+        final JwtSecurityContext securityContext = this.getContextForJwt(containerRequestContext, jwt);
 
         // do not proceed if no security context is returned
         if (securityContext == null) {
@@ -91,7 +91,7 @@ public class JwtSignedSecurityFilter implements ContainerRequestFilter {
         containerRequestContext.setSecurityContext(securityContext);
     }
 
-    JwtSecurityContext getContextForJwt(DecodedJWT jwt) {
+    JwtSecurityContext getContextForJwt(final ContainerRequestContext containerRequestContext, DecodedJWT jwt) {
         if (jwt == null) {
             return null;
         }
@@ -131,6 +131,24 @@ public class JwtSignedSecurityFilter implements ContainerRequestFilter {
         //           can handle some of this but not all of it. if you allow the same jwt
         //           to be used indefinitely (without checking for expiration) then
         //           a stolen JWT allows access to the API.
+
+        // something like this would allow you to stop handling the request
+        // early if certain claims or items were missing on a valid claim
+        /*
+        final Claim operation = jwt.getClaim("operation");
+        if (operation.isNull()) {
+            containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity("No operation claim").build());
+            return null;
+        }
+         */
+        //  or if an expiration claim was not given
+        /*
+        final Claim exp = jwt.getClaim("exp");
+        if (exp.isNull()) {
+            containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity("No expiration ('exp') claim").build());
+            return null;
+        }
+         */
 
         // with a verified jwt we can create a new security context
         return new JwtSecurityContext(jwt, SIGNED_JWT_ROLE);

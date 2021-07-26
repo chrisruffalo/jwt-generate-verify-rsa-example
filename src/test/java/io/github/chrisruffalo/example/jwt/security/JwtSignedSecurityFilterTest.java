@@ -12,8 +12,10 @@ import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import javax.inject.Inject;
+import javax.ws.rs.container.ContainerRequestContext;
 import java.security.interfaces.RSAPrivateKey;
 
 @QuarkusTest
@@ -47,7 +49,7 @@ class JwtSignedSecurityFilterTest {
         final DecodedJWT jwt = JWT.decode(jwtCookie);
 
         // get response (first parse as verified token which should work because we already have the key)
-        final JwtSecurityContext context = filter.getContextForJwt(jwt);
+        final JwtSecurityContext context = filter.getContextForJwt(Mockito.mock(ContainerRequestContext.class), jwt);
         Assertions.assertNotNull(context);
     }
 
@@ -75,7 +77,7 @@ class JwtSignedSecurityFilterTest {
 
         // get response which should be null because the jwt is signed with the private key from
         // the second generation but the subject does not have the matching key
-        final JwtSecurityContext context = filter.getContextForJwt(jwt);
+        final JwtSecurityContext context = filter.getContextForJwt(Mockito.mock(ContainerRequestContext.class), jwt);
         Assertions.assertNull(context);
     }
 

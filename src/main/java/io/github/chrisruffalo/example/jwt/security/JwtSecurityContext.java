@@ -22,7 +22,6 @@ public class JwtSecurityContext implements SecurityContext {
     private boolean isSecure = false;
     private String scheme = "bearer";
 
-
     public JwtSecurityContext(DecodedJWT jwt, final String... roles) {
         this.subject = jwt.getSubject();
         this.roles.addAll(Arrays.stream(roles).map(String::toLowerCase).collect(Collectors.toSet()));
